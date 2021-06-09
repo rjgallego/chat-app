@@ -1,9 +1,32 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Form, Button, Col, Row, Container, Image} from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import logo from './Logo.JPG';
+import axios from 'axios';
 
 const Login = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleEmail = (event) => {
+        setEmail(event.target.value)
+    }
+
+    const handlePassword = (event) => {
+        setPassword(event.target.value)
+    }
+
+    const handleLogin = (event) => {
+        event.preventDefault()
+        const user = {
+            email: email,
+            password: password
+        }
+        console.log(user)
+        axios.post('http://localhost:5000/login', user)
+            .then(response => console.log(response.data))
+    }
+
     return (
         <Container>
             <Row className="mt-5" lg={2}>
@@ -15,18 +38,18 @@ const Login = () => {
             <Row lg={3}>
                 <Col lg={{ offset: 4 }}>
                     <Form>
-                        <Form.Row controlId="formHorizontalEmail" className="mt-2">
+                        <Form.Row className="mt-2">
                             <Col>
-                                <Form.Control type="email" placeholder="Email" />
+                                <Form.Control type="email" placeholder="Email" onChange={handleEmail}/>
                             </Col>
                         </Form.Row>
-                        <Form.Group as={Row} controlId="formHorizontalPassword" className="mt-4">
+                        <Form.Group as={Row} className="mt-4">
                             <Col>
-                                <Form.Control type="password" placeholder="Password" />
+                                <Form.Control type="password" placeholder="Password" onChange={handlePassword} />
                             </Col>
                         </Form.Group>
                         <Form.Row>
-                                <Button variant="danger" type="submit" className="mx-4 mt-3 w-25">Login</Button>
+                                <Button variant="danger" type="submit" className="mx-4 mt-3 w-25" onClick={handleLogin}>Login</Button>
                                 <Button variant="danger" type="submit" className="mx-4 mt-3 w-25">Sign Up</Button>
                         </Form.Row>
                     </Form>
