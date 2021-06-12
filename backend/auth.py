@@ -22,33 +22,13 @@ def sign_up():
         password = request.json['password']
         conf_password = request.json['confPassword']
 
-        if len(email) < 4:
-            return jsonify(
-                error="email",
-                message="Invalid email"
-            )
-        elif len(first_name) < 1:
-            return jsonify(
-                error="firstName",
-                message="First name is required"
-            )
-        elif len(last_name) < 1:
-            return jsonify(
-                error="lastName",
-                message="Last name is required"
-            )
-        elif len(password) < 7:
-            return jsonify(
-                error="password",
-                message="Password must be 7 character or more"
-            )
-        elif password != conf_password:
+        if password != conf_password:
             return jsonify(
                 error="confPassword",
                 message="Passwords do not match"
             )
         else:
+            encrypted = generate_password_hash(password, method='sha256')
             return jsonify(
                 success="User added to database"
             )
-    return "<p>Sign Up</p>"
