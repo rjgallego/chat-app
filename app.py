@@ -1,4 +1,4 @@
-from routes import create_app
+from backend import create_app
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 import os
