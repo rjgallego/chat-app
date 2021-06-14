@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models import UserModel
+from backend import db
 
 auth = Blueprint('auth', __name__)
 
@@ -17,9 +18,6 @@ def logout():
 @auth.route('/sign-up', methods=['POST'])
 def sign_up():
     if request.method == 'POST':
-        first_name = request.json['firstName']
-        last_name = request.json['lastName']
-        email = request.json['email']
         password = request.json['password']
         conf_password = request.json['confPassword']
 
@@ -29,7 +27,23 @@ def sign_up():
                 message="Passwords do not match"
             )
         else:
-            encrypted = generate_password_hash(password, method='sha256')
-            return jsonify(
-                success="User added to database"
-            )
+            return add_user(request)
+
+def add_user(request):
+    firstname = request.json['firstName']
+    lastname = request.json['lastName']
+    email = request.json['email']
+    password = request.json['password']
+
+    if(UserModel.query.filter_by(email=email).first() != None):
+        return jsonify(
+            error="Account with that email already exists"
+        )
+
+    hash = generate_password_hash(password, method='sha256')
+    newUser = UserModel(firstname, lastname, email, hash)
+    db.session.add(newUser)
+    db.session.commit()
+    return jsonify(
+        success="User added to database"
+    )
