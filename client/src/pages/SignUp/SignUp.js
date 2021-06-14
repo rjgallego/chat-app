@@ -4,6 +4,7 @@ import axios from 'axios';
 
 const SignUp = () => {
     const [validated, setValidated] = useState(false);
+    const [isMatch, setIsMatch] = useState(true);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
@@ -14,7 +15,10 @@ const SignUp = () => {
     const handleLastName = (event) => setLastName(event.target.value)
     const handleEmail = (event) => setEmail(event.target.value)
     const handlePassword = (event) => setPassword(event.target.value)
-    const handleConfPassword = (event) => setConfPassword(event.target.value)
+    const handleConfPassword = (event) =>{ 
+        setConfPassword(event.target.value)
+        setIsMatch(event.target.value === password)
+    }
 
     const handleSubmit = (event) => {
         const form = event.currentTarget;
@@ -22,6 +26,13 @@ const SignUp = () => {
         if (form.checkValidity() === false) {
             event.preventDefault();
             event.stopPropagation();
+        }
+
+        if(password !== confPassword){
+            event.preventDefault();
+            event.stopPropagation();
+            setIsMatch(false)
+            return
         }
 
         const data = {
@@ -33,7 +44,6 @@ const SignUp = () => {
         }
 
         axios.post('http://localhost:5000/sign-up', data)
-            .then(result => console.log(result.data))
         setValidated(true);
     }
 
@@ -86,9 +96,9 @@ const SignUp = () => {
                             <Form.Group as={Row} className="mt-2">
                                 <Form.Label column lg={4} className="d-flex justify-content-left">Confirm Password:</Form.Label>
                                 <Col>
-                                    <Form.Control required type="password" onChange={handleConfPassword}/>
+                                    <Form.Control required type="password" onChange={handleConfPassword} className={isMatch ? '' : 'is-invalid'}/>
                                     <Form.Control.Feedback type="invalid">
-                                        Password confirmation is required.
+                                        Passwords do not match
                                     </Form.Control.Feedback>
                                 </Col>
                             </Form.Group>
