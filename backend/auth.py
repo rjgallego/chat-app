@@ -18,32 +18,20 @@ def logout():
 @auth.route('/sign-up', methods=['POST'])
 def sign_up():
     if request.method == 'POST':
+        firstname = request.json['firstName']
+        lastname = request.json['lastName']
+        email = request.json['email']
         password = request.json['password']
-        conf_password = request.json['confPassword']
 
-        if password != conf_password:
+        if(UserModel.query.filter_by(email=email).first() != None):
             return jsonify(
-                error="confPassword",
-                message="Passwords do not match"
+                error="Account with that email already exists"
             )
-        else:
-            return add_user(request)
 
-def add_user(request):
-    firstname = request.json['firstName']
-    lastname = request.json['lastName']
-    email = request.json['email']
-    password = request.json['password']
-
-    if(UserModel.query.filter_by(email=email).first() != None):
+        hash = generate_password_hash(password, method='sha256')
+        newUser = UserModel(firstname, lastname, email, hash)
+        db.session.add(newUser)
+        db.session.commit()
         return jsonify(
-            error="Account with that email already exists"
+            success="User added to database"
         )
-
-    hash = generate_password_hash(password, method='sha256')
-    newUser = UserModel(firstname, lastname, email, hash)
-    db.session.add(newUser)
-    db.session.commit()
-    return jsonify(
-        success="User added to database"
-    )
