@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
-import {Form, Button, Col, Row, Container} from 'react-bootstrap';
-import axios from 'axios';
+import React, { useState } from 'react'
+import {Form, Button, Col, Row, Container} from 'react-bootstrap'
+import axios from 'axios'
+import {Redirect} from 'react-router-dom'
+
+const URL = 'http://localhost:5000/sign-up'
 
 const SignUp = () => {
     const [validated, setValidated] = useState(false);
@@ -10,6 +13,8 @@ const SignUp = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confPassword, setConfPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState(null)
+    const [redirect, setRedirect] = useState(false)
 
     const handleFirstName = (event) => setFirstName(event.target.value)
     const handleLastName = (event) => setLastName(event.target.value)
@@ -21,15 +26,14 @@ const SignUp = () => {
     }
 
     const handleSubmit = (event) => {
+        event.preventDefault();
         const form = event.currentTarget;
 
         if (form.checkValidity() === false) {
-            event.preventDefault();
             event.stopPropagation();
         }
 
         if(password !== confPassword){
-            event.preventDefault();
             event.stopPropagation();
             setIsMatch(false)
             return
@@ -39,14 +43,25 @@ const SignUp = () => {
             firstName: firstName,
             lastName: lastName,
             email: email,
-            password: password,
-            confPassword: confPassword
+            password: password
         }
 
-        axios.post('http://localhost:5000/sign-up', data)
-        setValidated(true);
+        axios.post(URL, data).then(result => {
+            if(result.data.error){
+                event.stopPropagation();
+                setErrorMessage(result.data.error)
+            }
+            else {
+                setRedirect(true)
+                setValidated(true);
+
+            }
+        })
     }
 
+    if(redirect){
+        return <Redirect to="/login" />
+    }
 
     return (
         <div id="main" className="d-flex align-items-center">
@@ -54,6 +69,13 @@ const SignUp = () => {
                 <Row className="mt-5">
                     <h1 className="text-center">Create a New Account</h1>
                 </Row>
+                {
+                    errorMessage ? 
+                        <Row>
+                            <h6 className="text-center mt-3 mb-0 text-danger">{errorMessage}</h6>
+                        </Row>
+                    : ''
+                }
                 <Row lg={2}>
                     <Col lg={{ offset: 3 }} className="text-left">
                         <Form noValidate validated={validated} onSubmit={handleSubmit}>
