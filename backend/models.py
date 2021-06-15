@@ -16,3 +16,14 @@ class UserModel(db.Model):
     
     def __repr__(self):
         return '<id {}>'.format(self.id)
+
+class ChannelModel(db.Model):
+    __tablename__ = 'channels'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), unique=True)
+
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return '<name {}>'.format(self.name)
