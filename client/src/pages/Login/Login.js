@@ -1,12 +1,17 @@
-import React, {useState} from 'react';
-import {Form, Button, Col, Row, Container, Image} from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import logo from './Logo.JPG';
-import axios from 'axios';
+import React, {useState} from 'react'
+import {Form, Button, Col, Row, Container, Image} from 'react-bootstrap'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import logo from './Logo.JPG'
+import axios from 'axios'
+import {Redirect} from 'react-router-dom'
+
+const URL = 'http://localhost:5000/login'
 
 const Login = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [errorMessage, setErrorMessage] = useState(null)
+    const [reroute, setReroute] = useState(false)
 
     const handleEmail = (event) => {
         setEmail(event.target.value)
@@ -22,9 +27,19 @@ const Login = () => {
             email: email,
             password: password
         }
-        console.log(user)
-        axios.post('http://localhost:5000/login', user)
-            .then(response => console.log(response.data))
+        axios.post(URL, user)
+            .then(response => {
+                if(response.data.error){
+                    setErrorMessage(response.data.error)
+                    return
+                }
+                sessionStorage.setItem("token", response.data.token)
+                setReroute(true)
+            })
+    }
+
+    if(sessionStorage.getItem("token") || reroute){
+        return <Redirect to="/" />
     }
 
     return (
@@ -36,6 +51,12 @@ const Login = () => {
                 <Row className="mt-3 mb-4">
                     <div className="text-center">Connect with peers working to transform themselves through fitness</div>
                 </Row>
+                {
+                    errorMessage ?   <Row className="mt-3 mb-4">
+                                        <div className="text-center text-danger">{errorMessage}</div>
+                                    </Row>
+                                :   ''
+                }
                 <Row lg={3}>
                     <Col lg={{ offset: 4 }}>
                         <Form>
