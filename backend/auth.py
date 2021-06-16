@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import login_user, login_required, logout_user, current_user
 from .models import UserModel
 from backend import db
 
@@ -8,8 +9,14 @@ auth = Blueprint('auth', __name__)
 @auth.route('/login', methods=['POST'])
 def login():
     if request.method == 'POST':
-        print(str(request.json))
-        return request.json["email"]
+        email = request.json["email"]
+        password = request.json["password"]
+        user = UserModel.query.filter_by(email=email).first()
+        if user:
+            return login(user, password)
+        return jsonify(
+            error="Email does not exist"
+        )
 
 @auth.route('/logout')
 def logout():
@@ -23,7 +30,7 @@ def sign_up():
         email = request.json['email']
         password = request.json['password']
 
-        if(UserModel.query.filter_by(email=email).first() != None):
+        if UserModel.query.filter_by(email=email).first() != None:
             return jsonify(
                 error="Account with that email already exists"
             )
@@ -35,3 +42,14 @@ def sign_up():
         return jsonify(
             success="User added to database"
         )
+
+def login(user, password):
+    if check_password_hash(user.hash, password):
+        login_user(user, remember=True)
+        return jsonify(
+            success="User logged in",
+            id=user.id
+        )
+    return jsonify(
+        error="Invalid password"
+    )
