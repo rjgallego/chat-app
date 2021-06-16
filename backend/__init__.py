@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
 
 from dotenv import load_dotenv
 import os
@@ -19,6 +20,14 @@ db = SQLAlchemy(app)
 
 from .views import views
 from .auth import auth
+from .models import UserModel
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(id):
+    return UserModel.query.get(int(id))
 
 app.register_blueprint(views, url_prefix='/')
 app.register_blueprint(auth, url_prefix='/')
