@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, login_required, logout_user, current_user
 from .models import UserModel
 from backend import db
+from flask_jwt_extended import create_access_token, jwt_required
 
 auth = Blueprint('auth', __name__)
 
@@ -18,7 +18,8 @@ def login():
             error="Email does not exist"
         )
 
-@auth.route('/logout')
+@auth.route('/logout', methods=['POST'])
+@jwt_required()
 def logout():
     return "<p>Logout</p>"
 
@@ -45,9 +46,8 @@ def sign_up():
 
 def login(user, password):
     if check_password_hash(user.hash, password):
-        login_user(user, remember=True)
         return jsonify(
-            success="User logged in",
+            token=create_access_token(identity=user.email),
             id=user.id
         )
     return jsonify(
