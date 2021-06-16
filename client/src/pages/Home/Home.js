@@ -1,8 +1,13 @@
-import React, {useState} from 'react'
+import React from 'react'
 import ChannelCard from './ChannelCard'
 import {Container, Row, Col, Nav, Card} from 'react-bootstrap'
+import {Redirect} from 'react-router-dom'
 
 const Home = () => {
+    if(!sessionStorage.getItem("token")){
+        return <Redirect to="/login" />
+    }
+
     return (
         <Container lg={2} fluid>
             <Row>
@@ -19,7 +24,7 @@ const Home = () => {
                 <Col lg={10}>
                     <Card className="bg-light w-100 mt-3 p-1" style={{height: '85vh'}}>
                         <div>
-                            <Card className="w-50 p-0 m-0 float-right bg-warning" style={{fontWeight: '0.75rem'}}>
+                            <Card className="w-50 p-0 m-0 float-right bg-warning" style={{fontSize: '0.75rem', float: 'right'}}>
                                 <Card.Body>
                                     <Card.Link className="text-dark text-decoration-none" style={{fontSize: '0.9rem', fontWeight:'bold'}}>Joe Schmoe</Card.Link>
                                     <Card.Link className="text-muted text-decoration-none">06-14-21 8:30pm</Card.Link>
@@ -30,7 +35,7 @@ const Home = () => {
                                 </Card.Body>
                             </Card>
                         </div>
-                        <Card className="w-50 p-0 m-0 float-right"  style={{fontSize: '0.75rem'}}>
+                        <Card className="w-50 p-0 m-0"  style={{fontSize: '0.75rem'}}>
                             <Card.Body>
                                 <Card.Link className="text-dark text-decoration-none" style={{fontSize: '0.9rem', fontWeight:'bold'}}>Don Draper</Card.Link>
                                 <Card.Link className="text-muted text-decoration-none">06-14-21 8:30pm</Card.Link>
