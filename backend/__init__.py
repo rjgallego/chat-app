@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
+from flask_jwt_extended import JWTManager
 
 from dotenv import load_dotenv
 import os
@@ -14,6 +14,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('POSTGRES_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET')
 CORS(app)
 
 db = SQLAlchemy(app)
@@ -22,12 +23,7 @@ from .views import views
 from .auth import auth
 from .models import UserModel
 
-login_manager = LoginManager()
-login_manager.init_app(app)
-
-@login_manager.user_loader
-def load_user(id):
-    return UserModel.query.get(int(id))
+jwt = JWTManager(app)
 
 app.register_blueprint(views, url_prefix='/')
 app.register_blueprint(auth, url_prefix='/')
