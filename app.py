@@ -1,6 +1,5 @@
 from backend import app
 from dotenv import load_dotenv
-from flask_sqlalchemy import SQLAlchemy
 import os
 
 load_dotenv()
