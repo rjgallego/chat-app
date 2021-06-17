@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {Card, InputGroup, FormControl} from 'react-bootstrap'
 import axios from 'axios'
 
-const URL = 'http://localhost:5000/messages';
+const URL = 'http://localhost:5000/new-message';
 
 const MessageBoard = ({userId, channelId}) => {
     const [messages, setMessages] = useState([])
