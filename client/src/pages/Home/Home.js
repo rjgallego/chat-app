@@ -6,6 +6,7 @@ import {Redirect} from 'react-router-dom'
 
 const Home = () => {
     const [selectedChannel, setSelectedChannel] = useState("")
+    const [userId, setUserId] = useState(sessionStorage.getItem("userId"))
 
     const handleClick = () => sessionStorage.removeItem('token')
 
@@ -27,7 +28,7 @@ const Home = () => {
                     <ChannelCard selected={selectedChannel} setSelected={setSelectedChannel} />
                 </Col>
                 <Col lg={10}>
-                    <MessageBoard />
+                    <MessageBoard userId={userId} channelId={selectedChannel} />
                 </Col>
             </Row>
         </Container>
