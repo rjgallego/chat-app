@@ -34,6 +34,7 @@ const Login = () => {
                     return
                 }
                 sessionStorage.setItem("token", response.data.token)
+                sessionStorage.setItem("userId", response.data.id)
                 setReroute(true)
             })
     }
