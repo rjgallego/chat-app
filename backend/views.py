@@ -1,12 +1,22 @@
 from flask import Blueprint, request, jsonify
 from backend import db
-from .models import ChannelModel
+from datetime import datetime
+from .models import ChannelModel, MessageModel
 
 views = Blueprint('views', __name__)
 
-@views.route('/')
-def home():
-    return 'hello'
+@views.route('/messages', methods=['GET', 'POST'])
+def messages():
+    if request.method == 'POST':
+        channel_id = request.json['channel_id']
+        user_id = request.json['user_id']
+        text = request.json['text']
+        date = datetime.now()
+
+        db.session.add(MessageModel(channel_id, user_id, text, date))
+        db.session.commit()
+        return jsonify(success="Message added")
+    return jsonify(success="Messages returned")
 
 @views.route('/channels', methods=['GET', 'POST'])
 def channels():
@@ -16,7 +26,7 @@ def channels():
     return get_channels()
 
 def add_channel(channel):
-    if(ChannelModel.query.filter_by(name=channel).first() != None):
+    if ChannelModel.query.filter_by(name=channel).first() != None:
         return jsonify(
             error="A channel with that name already exists"
         )
