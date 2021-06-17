@@ -30,6 +30,9 @@ def get_channels():
     channels = ChannelModel.query.order_by(ChannelModel.name).all()
     channel_list = []
     for channel in channels:
-        channel_list.append(channel.name)
+        channel_list.append({
+            'id': channel.id,
+            'name': channel.name
+        })
     return jsonify({"channels": channel_list})
     
