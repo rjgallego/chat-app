@@ -4,9 +4,8 @@ import axios from 'axios';
 
 const URL = 'http://localhost:5000/channels';
 
-const ChannelCard = () => {
+const ChannelCard = ({selected, setSelected}) => {
     const [channels, setChannels] = useState([])
-    const [selectedChannel, setSelectedChannel] = useState("")
     const [isEditing, setIsEditing] = useState(false)
     const [isError, setIsError] = useState(false)
 
@@ -17,24 +16,27 @@ const ChannelCard = () => {
     const getChannels = () => {
         axios.get(URL)
             .then(result => {
-                setChannels(result.data.channels)
-                setSelectedChannel(result.data.channels[0])
+                const channels = result.data.channels
+                setChannels(channels)
+                setSelected(channels[0].id)
             })
     }
 
     const createButtons = () => {
         return channels.map((channel, i) => {
             return <Button key={i}
-                    id={channel}
+                    id={channel.id}
                     variant="outline-light" 
-                    className="w-75"
+                    className='w-75'
                     onClick={handleClick}
-                    active={selectedChannel === channel}># {channel}</Button>
+                    active={selected === channel.id}># {channel.name}</Button>
         })
     }
 
     const handleAddChannel = () => setIsEditing(true)
-    const handleClick = (event) => setSelectedChannel(event.target.id)
+
+    const handleClick = (event) => setSelected(event.target.id)
+
     const handleEnter = (event) => {
         if(event.code !== "Enter") return;
 
