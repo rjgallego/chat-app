@@ -65,6 +65,7 @@ def get_channels():
 def get_user(id):
     user = UserModel.query.filter_by(id=id).first()
     return {
+        'id': user.id,
         'firstname': user.firstname,
         'lastname': user.lastname
     }
