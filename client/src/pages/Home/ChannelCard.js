@@ -3,6 +3,11 @@ import {Card, Button, InputGroup, FormControl} from 'react-bootstrap'
 import axios from 'axios';
 
 const URL = 'http://localhost:5000/channels';
+const options = {
+    headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`
+    }
+}
 
 const ChannelCard = ({selected, setSelected}) => {
     const [channels, setChannels] = useState([])
@@ -14,7 +19,7 @@ const ChannelCard = ({selected, setSelected}) => {
     },[])
 
     const getChannels = () => {
-        axios.get(URL)
+        axios.get(URL, options)
             .then(result => {
                 const channels = result.data.channels
                 setChannels(channels)

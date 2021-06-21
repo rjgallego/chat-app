@@ -5,6 +5,11 @@ import './MessageBoard.css'
 
 const URL = 'http://localhost:5000/new-message';
 const MESSAGE_URL = 'http://localhost:5000/messages'
+const options = {
+    headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`
+    }
+}
 
 const MessageBoard = ({userId, channelId}) => {
     const [messages, setMessages] = useState([])
@@ -38,7 +43,7 @@ const MessageBoard = ({userId, channelId}) => {
             channel_id: parseInt(channelId)
         }
 
-        axios.post(MESSAGE_URL, data)
+        axios.post(MESSAGE_URL, data, options)
             .then(response => setMessages(response.data.messages))
             .then(response => createMessageCards())
     }
@@ -54,25 +59,11 @@ const MessageBoard = ({userId, channelId}) => {
             text: messageText,
         }
         
-        axios.post(URL, data).then(response => console.log(response.data))
+        axios.post(URL, data, options)
         setMessageText("")
         event.target.value = ""
     }
-
-{/* <div>
-    <Card className="w-50 p-0 m-0"  style={{fontSize: '0.75rem'}}>
-        <Card.Body>
-            <Card.Link className="text-dark text-decoration-none" style={{fontSize: '0.9rem', fontWeight:'bold'}}>Don Draper</Card.Link>
-            <Card.Link className="text-muted text-decoration-none">06-14-21 8:30pm</Card.Link>
-            <Card.Text className="p-0 mt-2">
-                        Some quick example text to build on the card title and make up the bulk of
-                        the card's content.
-            </Card.Text>
-        </Card.Body>
-    </Card>
-</div> */}
     
-
     return (
         <Card className="bg-light w-100 mt-3 p-1" style={{height: '85vh'}}>
             {
