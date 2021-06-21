@@ -2,10 +2,12 @@ from flask import Blueprint, request, jsonify
 from backend import db
 from datetime import datetime
 from .models import ChannelModel, MessageModel, UserModel
+from flask_jwt_extended import jwt_required
 
 views = Blueprint('views', __name__)
 
 @views.route('/new-message', methods=['POST'])
+@jwt_required()
 def new_message():
     if request.method == 'POST':
         channel_id = request.json['channel_id']
@@ -18,6 +20,7 @@ def new_message():
         return jsonify(success="Message added")
     return jsonify(success="Messages returned")
 
+@jwt_required()
 @views.route('/messages', methods=['POST'])
 def messages():
     if request.method == 'POST':
@@ -35,6 +38,7 @@ def messages():
         })
 
 @views.route('/channels', methods=['GET', 'POST'])
+@jwt_required()
 def channels():
     if request.method == 'POST':
         channel = request.json['channel']
