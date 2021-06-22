@@ -3,7 +3,7 @@ import {Form, Button, Col, Row, Container} from 'react-bootstrap'
 import axios from 'axios'
 import {Redirect} from 'react-router-dom'
 
-const URL = 'http://localhost:5000/sign-up'
+const URL = 'http://localhost:5000/auth/sign-up'
 
 const SignUp = () => {
     const [validated, setValidated] = useState(false);

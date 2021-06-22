@@ -5,7 +5,7 @@ import logo from './Logo.JPG'
 import axios from 'axios'
 import {Redirect} from 'react-router-dom'
 
-const URL = 'http://localhost:5000/login'
+const URL = 'http://localhost:5000/auth/login'
 
 const Login = () => {
     const [email, setEmail] = useState('')
