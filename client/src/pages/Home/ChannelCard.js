@@ -1,41 +1,48 @@
-import React, {useState, useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import {Card, Button, InputGroup, FormControl} from 'react-bootstrap'
-import axios from 'axios';
+import axios from 'axios'
 
 const URL = 'http://localhost:5000/channels';
-const options = {
-    headers: {
-        Authorization: `Bearer ${sessionStorage.getItem("token")}`
-    }
-}
 
-const ChannelCard = ({selected, setSelected}) => {
+const ChannelCard = ({selected, setSelected, removeToken, setRedirect, token}) => {
     const [channels, setChannels] = useState([])
     const [isEditing, setIsEditing] = useState(false)
     const [isError, setIsError] = useState(false)
 
     useEffect(() => {
         getChannels()
-    },[])
+    }, [token])
 
-    const getChannels = () => {
-        axios.get(URL, options)
-            .then(result => {
-                const channels = result.data.channels
-                setChannels(channels)
-                setSelected(channels[0].id)
-            })
-    }
 
     const createButtons = () => {
         return channels.map((channel, i) => {
             return <Button key={i}
                     id={channel.id}
                     variant="outline-light" 
-                    className='w-75'
-                    onClick={handleClick}
-                    active={selected === channel.id}># {channel.name}</Button>
+                    className={`w-75 ${selected === channel.id ? 'active' : ''}`}
+                    onClick={handleClick}># {channel.name}</Button>
         })
+    }
+
+    const getChannels = () => {
+        const options = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+        axios.get(URL, options)
+            .then(response => {
+                const channels = response.data.channels
+                setChannels(channels)
+                setSelected(channels[0].id)
+            })
+            .catch(error => {
+                if(error.response.status === 401){
+                    removeToken()
+                    setRedirect(true)
+                    return
+                }
+            })
     }
 
     const handleAddChannel = () => setIsEditing(true)
@@ -45,13 +52,19 @@ const ChannelCard = ({selected, setSelected}) => {
     const handleEnter = (event) => {
         if(event.code !== "Enter") return;
 
+        const options = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+
         setIsEditing(false)
 
         const data = {
             channel: event.target.value
         }
         
-        axios.post(URL, data)
+        axios.post(URL, data, options)
             .then(result => {
                 if(result.data.error){
                     setIsError(true)
