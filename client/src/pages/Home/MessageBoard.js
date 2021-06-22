@@ -5,24 +5,43 @@ import './MessageBoard.css'
 
 const URL = 'http://localhost:5000/new-message';
 const MESSAGE_URL = 'http://localhost:5000/messages'
+
 const options = {
     headers: {
         Authorization: `Bearer ${sessionStorage.getItem("token")}`
     }
 }
 
-const MessageBoard = ({userId, channelId}) => {
-    const [messages, setMessages] = useState([])
+const MessageBoard = ({userId, channelId, setRedirect, removeToken}) => {
+    const [messages, setMessages] = useState(null)
     const [messageText, setMessageText] = useState("")
 
     useEffect(() => {
         getMessages()
-    },[])
+    },[channelId])
+
+    const getMessages = () => {
+        const data = {
+            channel_id: parseInt(channelId)
+        }
+
+        axios.post(MESSAGE_URL, data, options)
+            .then(response => {
+                setMessages(response.data.messages)
+            })
+            .catch(error => {
+                if(error.response.status === 401){
+                    removeToken()
+                    setRedirect(true)
+                    return
+                }
+            })
+    }
 
     const createMessageCards = () => {
         return messages.map((message, i) => {
             return <div key={i}>
-                    <Card className={`w-50 p-0 mt-2 card-font 
+                    <Card className={`w-50 p-0 mt-2 mx-2 card-font 
                             ${message.user.id === parseInt(userId) ? 'bg-warning right' : ''}`}>
                         <Card.Body>
                             <Card.Link className="text-dark text-decoration-none user-font">
@@ -38,16 +57,6 @@ const MessageBoard = ({userId, channelId}) => {
         })
     }
 
-    const getMessages = () => {
-        const data = {
-            channel_id: parseInt(channelId)
-        }
-
-        axios.post(MESSAGE_URL, data, options)
-            .then(response => setMessages(response.data.messages))
-            .then(response => createMessageCards())
-    }
-
     const handleChange = (event) => setMessageText(event.target.value)
 
     const handleEnter = (event) => {
@@ -60,16 +69,19 @@ const MessageBoard = ({userId, channelId}) => {
         }
         
         axios.post(URL, data, options)
-        setMessageText("")
-        event.target.value = ""
+            .then(response => {
+                getMessages()
+                setMessageText("")
+                event.target.value = ""
+            })
     }
     
     return (
-        <Card className="bg-light w-100 mt-3 p-1" style={{height: '85vh'}}>
+        <Card className="bg-light w-100 mt-3 pb-5 overflow-auto" style={{height: '85vh'}}>
             {
-                createMessageCards()
+                messages ? createMessageCards() : ''
             }
-            <InputGroup size="sm" className="w-75 mx-auto h-100 d-flex align-items-end">
+            <InputGroup size="sm" className="w-75 position-fixed bottom-0 px-5 mb-5">
                     <FormControl
                         placeholder="Enter Message..."
                         aria-label="Message Input"
