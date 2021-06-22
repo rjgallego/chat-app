@@ -10,6 +10,12 @@ const Home = () => {
     const [redirect, setRedirect] = useState(false)
     const [token, setToken] = useState(sessionStorage.getItem('token'))
 
+    useEffect(() => {
+        if(!token){
+            setRedirect(true)
+        }
+    },[])
+
     const removeToken = () => sessionStorage.removeItem('token')
 
     return (
