@@ -16,7 +16,10 @@ const Home = () => {
         }
     },[])
 
-    const removeToken = () => sessionStorage.removeItem('token')
+    const redirectToLogin = () => {
+        sessionStorage.removeItem('token')
+        setRedirect(true)
+    }
 
     return (
         redirect ? <Redirect to="/login" />
@@ -24,7 +27,7 @@ const Home = () => {
             <Row>
                 <Nav className="bg-danger border border-light">
                     <Nav.Item>
-                        <Nav.Link href="/login" className="text-light" onClick={removeToken}>Logout</Nav.Link>
+                        <Nav.Link href="/login" className="text-light" onClick={redirectToLogin}>Logout</Nav.Link>
                     </Nav.Item>
                 </Nav>
             </Row>
@@ -32,15 +35,14 @@ const Home = () => {
                 <Col>
                     <ChannelCard selected={selectedChannel} 
                                  setSelected={setSelectedChannel} 
-                                 removeToken={removeToken}
-                                 setRedirect={setRedirect} 
+                                 redirectToLogin={redirectToLogin}
                                  token={token}/>
                 </Col>
                 <Col lg={10}>
                     <MessageBoard userId={userId} 
                                   channelId={selectedChannel} 
-                                  setRedirect={setRedirect}
-                                  removeToken={removeToken} />
+                                  redirectToLogin={redirectToLogin}
+                                  token={token} />
                 </Col>
             </Row>
         </Container>

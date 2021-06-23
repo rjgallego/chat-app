@@ -3,18 +3,17 @@ import {Card, InputGroup, FormControl} from 'react-bootstrap'
 import axios from 'axios'
 import './MessageBoard.css'
 
-const URL = 'http://localhost:5000/new-message';
-const MESSAGE_URL = 'http://localhost:5000/messages'
+const URL = '/new-message';
+const MESSAGE_URL = '/messages'
 
-const options = {
-    headers: {
-        Authorization: `Bearer ${sessionStorage.getItem("token")}`
-    }
-}
-
-const MessageBoard = ({userId, channelId, setRedirect, removeToken}) => {
+const MessageBoard = ({userId, channelId, redirectToLogin, token}) => {
     const [messages, setMessages] = useState(null)
     const [messageText, setMessageText] = useState("")
+    const options = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    }
 
     useEffect(() => {
         getMessages()
@@ -31,10 +30,28 @@ const MessageBoard = ({userId, channelId, setRedirect, removeToken}) => {
             })
             .catch(error => {
                 if(error.response.status === 401){
-                    removeToken()
-                    setRedirect(true)
+                    redirectToLogin()
                     return
                 }
+            })
+    }
+
+    const handleChange = (event) => setMessageText(event.target.value)
+
+    const handleEnter = (event) => {
+        if(event.code !== "Enter") return;
+
+        const data = {
+            channel_id: channelId,
+            user_id: parseInt(userId),
+            text: messageText,
+        }
+        
+        axios.post(URL, data, options)
+            .then(response => {
+                getMessages()
+                setMessageText("")
+                event.target.value = ""
             })
     }
 
@@ -55,25 +72,6 @@ const MessageBoard = ({userId, channelId, setRedirect, removeToken}) => {
                     </Card>
                 </div>
         })
-    }
-
-    const handleChange = (event) => setMessageText(event.target.value)
-
-    const handleEnter = (event) => {
-        if(event.code !== "Enter") return;
-
-        const data = {
-            channel_id: channelId,
-            user_id: parseInt(userId),
-            text: messageText,
-        }
-        
-        axios.post(URL, data, options)
-            .then(response => {
-                getMessages()
-                setMessageText("")
-                event.target.value = ""
-            })
     }
     
     return (

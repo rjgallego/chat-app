@@ -2,27 +2,22 @@ import React, {useEffect, useState} from 'react'
 import {Card, Button, InputGroup, FormControl} from 'react-bootstrap'
 import axios from 'axios'
 
-const URL = 'http://localhost:5000/channels';
+const URL = '/channels';
 
-const ChannelCard = ({selected, setSelected, removeToken, setRedirect, token}) => {
+const ChannelCard = ({selected, setSelected, redirectToLogin, token}) => {
     const [channels, setChannels] = useState([])
     const [isEditing, setIsEditing] = useState(false)
     const [isError, setIsError] = useState(false)
 
+    const options = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    }
+
     useEffect(() => {
         getChannels()
     }, [token])
-
-
-    const createButtons = () => {
-        return channels.map((channel, i) => {
-            return <Button key={i}
-                    id={channel.id}
-                    variant="outline-light" 
-                    className={`w-75 ${selected === channel.id ? 'active' : ''}`}
-                    onClick={handleClick}># {channel.name}</Button>
-        })
-    }
 
     const getChannels = () => {
         const options = {
@@ -38,8 +33,7 @@ const ChannelCard = ({selected, setSelected, removeToken, setRedirect, token}) =
             })
             .catch(error => {
                 if(error.response.status === 401){
-                    removeToken()
-                    setRedirect(true)
+                    redirectToLogin()
                     return
                 }
             })
@@ -51,13 +45,6 @@ const ChannelCard = ({selected, setSelected, removeToken, setRedirect, token}) =
 
     const handleEnter = (event) => {
         if(event.code !== "Enter") return;
-
-        const options = {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        }
-
         setIsEditing(false)
 
         const data = {
@@ -73,6 +60,16 @@ const ChannelCard = ({selected, setSelected, removeToken, setRedirect, token}) =
                 setIsError(false)
                 getChannels()
             })
+    }
+
+    const createButtons = () => {
+        return channels.map((channel, i) => {
+            return <Button key={i}
+                    id={channel.id}
+                    variant="outline-light" 
+                    className={`w-75 ${selected === channel.id ? 'active' : ''}`}
+                    onClick={handleClick}># {channel.name}</Button>
+        })
     }
 
     return (
