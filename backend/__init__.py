@@ -29,5 +29,13 @@ app.register_blueprint(views, url_prefix='/')
 app.register_blueprint(auth, url_prefix='/auth')
 
 @app.route('/')
-def serve():
+def home_page():
+    return send_from_directory(app.static_folder, 'index.html')
+
+@app.route('/login')
+def login_page():
+    return send_from_directory(app.static_folder, 'index.html')
+
+@app.route('/sign-up')
+def signup_page():
     return send_from_directory(app.static_folder, 'index.html')
