@@ -27,7 +27,7 @@ const Home = () => {
             <Row>
                 <Nav className="bg-danger border border-light">
                     <Nav.Item>
-                        <Nav.Link href="/login" className="text-light" onClick={redirectToLogin}>Logout</Nav.Link>
+                        <Nav.Link className="text-light" onClick={redirectToLogin}>Logout</Nav.Link>
                     </Nav.Item>
                 </Nav>
             </Row>
