@@ -47,8 +47,7 @@ def sign_up():
 def login(user, password):
     if check_password_hash(user.hash, password):
         return jsonify(
-            token=create_access_token(identity=user.email),
-            id=user.id
+            token=create_access_token(identity=user.id)
         )
     return jsonify(
         error="Invalid password"
