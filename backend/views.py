@@ -45,6 +45,13 @@ def channels():
         return add_channel(channel)
     return get_channels()
 
+@views.route('/user', methods=['POST'])
+@jwt_required()
+def user():
+    if(request.method == 'POST'):
+        id = request.json['id']
+        return jsonify(get_user(id))
+
 def add_channel(channel):
     if ChannelModel.query.filter_by(name=channel).first() != None:
         return jsonify(
