@@ -16,9 +16,11 @@ const MessageBoard = ({channelId, redirectToLogin, token}) => {
     }
 
     useEffect(() => {
-        getMessages()
-        if(token) setUserId(jwt_decode(token).sub)
-    },[channelId])
+        if(token) {
+            setUserId(jwt_decode(token).sub)
+            getMessages()
+        }
+    },[channelId, token])
 
     const getMessages = () => {
         const data = {
