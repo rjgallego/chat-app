@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react'
-import {Card, Button, InputGroup, FormControl} from 'react-bootstrap'
+import {Card, Button,ButtonGroup, InputGroup, FormControl} from 'react-bootstrap'
 import axios from 'axios'
+import jwt_decode from 'jwt-decode'
 
-const URL = '/channels';
-
-const ChannelCard = ({selected, setSelected, redirectToLogin, token}) => {
+const ChannelCard = ({setSelected, redirectToLogin, token}) => {
     const [channels, setChannels] = useState([])
     const [isEditing, setIsEditing] = useState(false)
     const [isError, setIsError] = useState(false)
+    const [user, setUser] = useState({})
 
     const options = {
         headers: {
@@ -17,15 +17,11 @@ const ChannelCard = ({selected, setSelected, redirectToLogin, token}) => {
 
     useEffect(() => {
         getChannels()
+        getUser()
     }, [token])
 
     const getChannels = () => {
-        const options = {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        }
-        axios.get(URL, options)
+        axios.get('/api/channels', options)
             .then(response => {
                 const channels = response.data.channels
                 setChannels(channels)
@@ -36,6 +32,14 @@ const ChannelCard = ({selected, setSelected, redirectToLogin, token}) => {
                     redirectToLogin()
                     return
                 }
+            })
+    }
+
+    const getUser = () => {
+        const id = jwt_decode(token).sub
+        axios.post('/api/user', {id: id}, options)
+            .then(response => {
+                setUser(response.data)
             })
     }
 
@@ -51,10 +55,11 @@ const ChannelCard = ({selected, setSelected, redirectToLogin, token}) => {
             channel: event.target.value
         }
         
-        axios.post(URL, data, options)
+        axios.post('/api/channels', data, options)
             .then(result => {
                 if(result.data.error){
                     setIsError(true)
+                    setTimeout(() => setIsError(false), 3000)
                     return
                 }
                 setIsError(false)
@@ -66,21 +71,24 @@ const ChannelCard = ({selected, setSelected, redirectToLogin, token}) => {
         return channels.map((channel, i) => {
             return <Button key={i}
                     id={channel.id}
-                    variant="outline-light" 
-                    className={`w-75 ${selected === channel.id ? 'active' : ''}`}
+                    variant='outline-light'
+                    className='channel w-100'
                     onClick={handleClick}># {channel.name}</Button>
         })
     }
 
     return (
-        <Card lg={1} className="bg-danger text-center text-light border mt-3" style={{height: '85vh'}}>
-            <Card.Body>
+        <Card lg={1} className="bg-danger text-center text-light border mt-3 overflow-auto" style={{height: '85vh'}}>
+            <Card.Body className="pt-1">
+                <Card.Text className="mb-3">Hello {user.firstname}!</Card.Text>
+                <Card.Text style={{fontSize: '0.75em'}} className="mb-0">Select a Channel: </Card.Text>
                 {
                     isError ? <Card.Text style={{fontSize: '0.75em'}} >Channel already exists</Card.Text>
                             : ''
                 }
-                
-                {channels.length === 0 ? '' : createButtons()}
+                <ButtonGroup vertical className="w-100">
+                    {channels.length === 0 ? '' : createButtons()}
+                </ButtonGroup>
                 {
                     isEditing ? 
                         <InputGroup size="sm" className="mt-2 w-75 mx-auto">
