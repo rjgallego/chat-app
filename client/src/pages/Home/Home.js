@@ -6,14 +6,13 @@ import {Redirect} from 'react-router-dom'
 
 const Home = () => {
     const [selectedChannel, setSelectedChannel] = useState("")
-    const [userId, setUserId] = useState(sessionStorage.getItem("userId"))
     const [redirect, setRedirect] = useState(false)
     const [token, setToken] = useState(sessionStorage.getItem('token'))
 
     useEffect(() => {
         if(!token){
             setRedirect(true)
-        }
+        } 
     },[])
 
     const redirectToLogin = () => {
@@ -33,14 +32,12 @@ const Home = () => {
             </Row>
             <Row>
                 <Col>
-                    <ChannelCard selected={selectedChannel} 
-                                 setSelected={setSelectedChannel} 
+                    <ChannelCard setSelected={setSelectedChannel} 
                                  redirectToLogin={redirectToLogin}
                                  token={token}/>
                 </Col>
                 <Col lg={10}>
-                    <MessageBoard userId={userId} 
-                                  channelId={selectedChannel} 
+                    <MessageBoard channelId={selectedChannel} 
                                   redirectToLogin={redirectToLogin}
                                   token={token} />
                 </Col>
