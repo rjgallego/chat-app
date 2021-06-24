@@ -2,13 +2,13 @@ import React, {useEffect, useState} from 'react'
 import {Card, InputGroup, FormControl} from 'react-bootstrap'
 import axios from 'axios'
 import './MessageBoard.css'
+import jwt_decode from 'jwt-decode'
 
-const URL = '/new-message';
-const MESSAGE_URL = '/messages'
-
-const MessageBoard = ({userId, channelId, redirectToLogin, token}) => {
+const MessageBoard = ({channelId, redirectToLogin, token}) => {
     const [messages, setMessages] = useState(null)
     const [messageText, setMessageText] = useState("")
+    const [userId, setUserId] = useState(0)
+    
     const options = {
         headers: {
             Authorization: `Bearer ${token}`
@@ -17,6 +17,7 @@ const MessageBoard = ({userId, channelId, redirectToLogin, token}) => {
 
     useEffect(() => {
         getMessages()
+        if(token) setUserId(jwt_decode(token).sub)
     },[channelId])
 
     const getMessages = () => {
@@ -24,7 +25,7 @@ const MessageBoard = ({userId, channelId, redirectToLogin, token}) => {
             channel_id: parseInt(channelId)
         }
 
-        axios.post(MESSAGE_URL, data, options)
+        axios.post('/api/messages', data, options)
             .then(response => {
                 setMessages(response.data.messages)
             })
@@ -43,11 +44,11 @@ const MessageBoard = ({userId, channelId, redirectToLogin, token}) => {
 
         const data = {
             channel_id: channelId,
-            user_id: parseInt(userId),
+            user_id: userId,
             text: messageText,
         }
         
-        axios.post(URL, data, options)
+        axios.post('/api/new-message', data, options)
             .then(response => {
                 getMessages()
                 setMessageText("")
@@ -59,7 +60,7 @@ const MessageBoard = ({userId, channelId, redirectToLogin, token}) => {
         return messages.map((message, i) => {
             return <div key={i}>
                     <Card className={`w-50 p-0 mt-2 mx-2 card-font 
-                            ${message.user.id === parseInt(userId) ? 'bg-warning right' : ''}`}>
+                            ${message.user.id === userId ? 'bg-warning right' : ''}`}>
                         <Card.Body>
                             <Card.Link className="text-dark text-decoration-none user-font">
                                 {`${message.user.firstname} ${message.user.lastname}`}
