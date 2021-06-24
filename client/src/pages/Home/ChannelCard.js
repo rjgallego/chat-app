@@ -16,8 +16,10 @@ const ChannelCard = ({setSelected, redirectToLogin, token}) => {
     }
 
     useEffect(() => {
-        getChannels()
-        getUser()
+        if(token){
+            getChannels()
+            getUser()
+        }
     }, [token])
 
     const getChannels = () => {
