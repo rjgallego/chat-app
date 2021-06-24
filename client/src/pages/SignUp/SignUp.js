@@ -3,8 +3,6 @@ import {Form, Button, Col, Row, Container} from 'react-bootstrap'
 import axios from 'axios'
 import {Redirect} from 'react-router-dom'
 
-const URL = '/auth/sign-up'
-
 const SignUp = () => {
     const [validated, setValidated] = useState(false);
     const [isMatch, setIsMatch] = useState(true);
@@ -46,7 +44,7 @@ const SignUp = () => {
             password: password
         }
 
-        axios.post(URL, data).then(result => {
+        axios.post('/api/sign-up', data).then(result => {
             if(result.data.error){
                 event.stopPropagation();
                 setErrorMessage(result.data.error)
