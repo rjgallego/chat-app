@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import {Card, InputGroup, FormControl} from 'react-bootstrap'
 import axios from 'axios'
+import moment from 'moment'
 import './MessageBoard.css'
 import jwt_decode from 'jwt-decode'
 
@@ -67,7 +68,7 @@ const MessageBoard = ({channelId, redirectToLogin, token}) => {
                             <Card.Link className="text-dark text-decoration-none user-font">
                                 {`${message.user.firstname} ${message.user.lastname}`}
                             </Card.Link>
-                            <Card.Link className="text-muted text-decoration-none">{message.date}</Card.Link>
+                            <Card.Link className="text-muted text-decoration-none">{moment(message.date).format('h:mm:ss A - MMM DD YYYY')}</Card.Link>
                             <Card.Text className="p-0 mt-2">
                                 {message.text}
                             </Card.Text>
