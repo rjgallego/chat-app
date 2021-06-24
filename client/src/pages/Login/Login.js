@@ -5,8 +5,6 @@ import logo from './Logo.JPG'
 import axios from 'axios'
 import {Redirect} from 'react-router-dom'
 
-const URL = '/auth/login'
-
 const Login = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -27,7 +25,7 @@ const Login = () => {
             email: email,
             password: password
         }
-        axios.post(URL, user)
+        axios.post('/api/login', user)
             .then(response => {
                 if(response.data.error){
                     setErrorMessage(response.data.error)
