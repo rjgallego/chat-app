@@ -28,7 +28,7 @@ const ChannelCard = ({setSelected, redirectToLogin, token}) => {
                 setSelected(channels[0].id)
             })
             .catch(error => {
-                if(error.response.status === 401){
+                if(error.response.status === 401 || error.response.status === 422){
                     redirectToLogin()
                     return
                 }
