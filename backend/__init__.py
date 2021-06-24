@@ -1,5 +1,4 @@
 from flask import Flask, render_template, send_from_directory,make_response
-from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 
@@ -14,8 +13,7 @@ app = Flask(__name__,static_folder='../client/build',static_url_path='/')
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL').replace("postgres://", "postgresql://", 1)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET')
-CORS(app)
+app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET')    
 
 db = SQLAlchemy(app)
 
@@ -25,8 +23,8 @@ from .models import UserModel
 
 jwt = JWTManager(app)
 
-app.register_blueprint(views, url_prefix='/')
-app.register_blueprint(auth, url_prefix='/auth')
+app.register_blueprint(views, url_prefix='/api')
+app.register_blueprint(auth, url_prefix='/api')
 
 @app.route('/')
 def home_page():
