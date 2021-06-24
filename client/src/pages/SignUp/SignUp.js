@@ -28,7 +28,11 @@ const SignUp = () => {
         const form = event.currentTarget;
 
         if (form.checkValidity() === false) {
+            event.preventDefault();
             event.stopPropagation();
+
+            setValidated(true);
+            return
         }
 
         if(password !== confPassword){
@@ -51,8 +55,6 @@ const SignUp = () => {
             }
             else {
                 setRedirect(true)
-                setValidated(true);
-
             }
         })
     }
