@@ -41,8 +41,8 @@ const Login = () => {
     }
 
     return (
-        <div id="main" className="d-flex align-items-center">
-            <Container className="bg-light w-75 pb-5 mt-5 rounded">
+        <div id="main" className="d-flex align-items-center h-100">
+            <Container className="bg-light w-75 pb-5 mt-1 rounded">
                 <Row lg={2}>
                     <Image src={logo} className="mx-auto"/>
                 </Row>
@@ -68,9 +68,9 @@ const Login = () => {
                                     <Form.Control type="password" placeholder="Password" onChange={handlePassword} />
                                 </Col>
                             </Form.Group>
-                            <Form.Row>
-                                    <Button variant="danger" type="submit" className="mx-3 mt-3 px-4" onClick={handleLogin}>Login</Button>
-                                    <Button href="/sign-up" variant="danger" type="submit" className="mx-3 mt-3 px-4">Sign Up</Button>
+                            <Form.Row className="d-flex justify-content-center">
+                                    <Button variant="danger" type="submit" className="mt-3 px-4" onClick={handleLogin}>Login</Button>
+                                    <Button href="/sign-up" variant="danger" type="submit" className="mx-1 mt-3 px-4">Sign Up</Button>
                             </Form.Row>
                         </Form>
                     </Col>

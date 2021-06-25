@@ -64,9 +64,9 @@ const SignUp = () => {
     }
 
     return (
-        <div id="main" className="d-flex align-items-center">
-            <Container className="bg-light w-75 pb-5 mt-5 rounded">
-                <Row className="mt-5">
+        <div id="main" className="d-flex align-items-center h-100">
+            <Container className="bg-light w-75 pb-5 mt-lg-5 mt-2 rounded">
+                <Row className="mt-lg-5 mt-3">
                     <h1 className="text-center">Create a New Account</h1>
                 </Row>
                 {
@@ -79,7 +79,7 @@ const SignUp = () => {
                 <Row lg={2}>
                     <Col lg={{ offset: 3 }} className="text-left">
                         <Form noValidate validated={validated} onSubmit={handleSubmit}>
-                            <Form.Group as={Row} className="mt-5">
+                            <Form.Group as={Row} className="mt-lg-5">
                                 <Form.Label column lg={4} className="d-flex justify-content-left">First Name:</Form.Label>
                                 <Col>
                                     <Form.Control required type="text" onChange={handleFirstName}/>
@@ -126,7 +126,7 @@ const SignUp = () => {
                             </Form.Group>
                             <Form.Group as={Row}>
                                 <Col className='d-flex justify-content-center'>
-                                    <Button variant="danger" type="submit" className="mt-5 w-50">Sign Up</Button>
+                                    <Button variant="danger" type="submit" className="mt-lg-5 mt-4 w-50">Sign Up</Button>
                                 </Col>
                             </Form.Group>
                         </Form>
